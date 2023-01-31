@@ -1,6 +1,7 @@
 package mendingII.mixin;
 
 import net.minecraft.enchantment.MendingEnchantment;
+import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
