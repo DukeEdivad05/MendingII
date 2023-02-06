@@ -23,19 +23,11 @@ public class ServerPlayerInteractionManagerMixin {
         if(stack.isDamageable() && stack.hasEnchantments() && player.isSneaking() && (player.experienceProgress > 0 || player.experienceLevel > 0 || player.isCreative())) {
             if(EnchantmentHelper.getEquipmentLevel(Enchantments.MENDING, player) == 2) {
                 int i = Math.min(20, stack.getDamage());
-                if(player.experienceProgress * player.getNextLevelExperience() < i/2 && player.experienceLevel < 2) {
-                    System.out.println(player.experienceLevel);
-                    if(player.experienceLevel == 0) {
-                        i = (int) (player.experienceProgress * player.getNextLevelExperience()) * 2;
-                        System.out.println(i);
-                    } else if (player.experienceLevel == 1) {
-                        i = 7 + (int) (player.experienceProgress * player.getNextLevelExperience()) * 2;
-                    }
-                stack.setDamage(stack.getDamage() - i);
-                if (!player.isCreative()) {
-                    player.addExperience(-i / 2);
-                    }
+                if(!player.isCreative()) {
+                    i = Math.min(i, player.totalExperience * 2);
+                    player.addExperience(-i/2);
                 }
+                stack.setDamage(stack.getDamage() - i);
             }
         }
     }
