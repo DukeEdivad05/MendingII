@@ -1,10 +1,9 @@
 package mendingII.mixin;
 
+import mendingII.utils.ExperienceUtils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.command.ExperienceCommand;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.util.ActionResult;
@@ -18,16 +17,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ServerPlayerInteractionManager.class)
 public class ServerPlayerInteractionManagerMixin {
-    @Inject(method = "interactItem", at = @At("HEAD"))
+    @Inject(method = "interactItem", at = @At("HEAD"), cancellable = true)
     private void MendingDue(ServerPlayerEntity player, World world, ItemStack stack, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        if(stack.isDamageable() && stack.hasEnchantments() && player.isSneaking() && (player.experienceProgress > 0 || player.experienceLevel > 0 || player.isCreative())) {
+        if(stack.isDamageable() && stack.hasEnchantments() && player.isSneaking() && (ExperienceUtils.totalXpPoints(player) > 0 || player.isCreative())) {
             if(EnchantmentHelper.getEquipmentLevel(Enchantments.MENDING, player) == 2) {
-                int i = Math.min(20, stack.getDamage());
+                int damage = stack.getDamage();
+                int i = Math.min(20, damage);
                 if(!player.isCreative()) {
-                    i = Math.min(i, player.totalExperience * 2);
+                    i = Math.min(i, ExperienceUtils.totalXpPoints(player) * 2);
                     player.addExperience(-i/2);
                 }
-                stack.setDamage(stack.getDamage() - i);
+                stack.setDamage(damage - i);
+                cir.setReturnValue(ActionResult.success(true));
             }
         }
     }
