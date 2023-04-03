@@ -1,10 +1,11 @@
 package mendingII.utils;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ExperienceUtils {
-    public static int totalXpPoints(ServerPlayerEntity serverPlayerEntity) {
-        int level = serverPlayerEntity.experienceLevel;
+    public static int totalXpPoints(PlayerEntity playerEntity) {
+        int level = playerEntity.experienceLevel;
         int xpPoints = 0;
         for (int a = 0; a < level; a++) {
             if (a >= 30) {
@@ -13,7 +14,7 @@ public class ExperienceUtils {
                 xpPoints += a >= 15 ? 37 + (a - 15) * 5 : 7 + a * 2;
             }
         }
-        xpPoints += serverPlayerEntity.experienceProgress * serverPlayerEntity.getNextLevelExperience();
+        xpPoints += playerEntity.experienceProgress * playerEntity.getNextLevelExperience();
         return xpPoints;
     }
 }
